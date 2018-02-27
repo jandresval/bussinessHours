@@ -7,6 +7,8 @@ import {
 import { FormControl } from '@angular/forms';
 import { AgmCoreModule, MapsAPILoader } from '@agm/core';
 
+import {} from '@types/googlemaps';
+
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -18,11 +20,14 @@ export class HomeComponent implements OnInit {
   @ViewChild("search")
   public searchElementRef: ElementRef;
 
-  public searchControl: FormControl;
+  @ViewChild("infoWindow")
+  public infoWindowRef: ElementRef;
 
-  location: Coordinates = null;
-  latitude: any;
-  longitude: any;
+   private infowindow;
+
+  public location: Coordinates = null;
+  public latitude: any;
+  public longitude: any;
 
   zoom: number = 15;
 
@@ -31,22 +36,24 @@ export class HomeComponent implements OnInit {
 
   ngOnInit() {
 
-    //create search FormControl
-    this.searchControl = new FormControl();
-
     if(navigator.geolocation){
       navigator.geolocation.getCurrentPosition(position => {
         this.location = position.coords;
-        this.initializeMap(this.location.latitude, this.location.longitude);
+        this.initializeMap(this.location.latitude, this.location.longitude,15);
       });
    } else {
-    this.initializeMap(43.4905172,-80.2094872);
+    this.initializeMap(43.4905172,-80.2094872,15);
    }
 
    this.mapsAPILoader.load().then(() => {
     let autocomplete = new google.maps.places.Autocomplete(this.searchElementRef.nativeElement);
+    this.infowindow = new google.maps.InfoWindow();
+    this.infowindow.setContent(this.infoWindowRef.nativeElement);
+
     autocomplete.addListener("place_changed", () => {
       this.ngZone.run(() => {
+
+        this.infowindow.close();
         //get the place result
         let place: google.maps.places.PlaceResult = autocomplete.getPlace();
 
@@ -56,20 +63,26 @@ export class HomeComponent implements OnInit {
         }
 
         //set latitude, longitude and zoom
-        this.latitude = place.geometry.location.lat();
-        this.longitude = place.geometry.location.lng();
-        this.zoom = 18;
+        this.initializeMap(
+          place.geometry.location.lat(),
+          place.geometry.location.lng(),
+          18);
+          
       });
     });
   });
 
   }
 
-  initializeMap (lat: number, lng: number): void {
+  onMapClick($event) {
+    
+  }
+
+  initializeMap (lat: number, lng: number, zoom:number): void {
     this.latitude = lat;
     this.longitude = lng;
+    this.zoom = zoom;
 
-    
   }
 
 }

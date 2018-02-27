@@ -1,9 +1,15 @@
 <div class="form-group">
-    <input id="search" placeholder="search for location" autocorrect="off" autocapitalize="off" spellcheck="off" type="text" class="form-control" #search [formControl]="searchControl">
+    <input id="search" placeholder="search for location" autocorrect="off" autocapitalize="off" spellcheck="off" type="text" class="form-control" #search>
 </div>
 <agm-map
 [latitude]="latitude" 
 [longitude]="longitude"
-[zoom]="zoom">
-    <agm-marker [latitude]="latitude" [longitude]="longitude"></agm-marker>
+[zoom]="zoom"
+[disableDefaultUI]="true"
+[disableDoubleClickZoom]="true"
+[fullscreenControl]="true"
+(mapClick)="onMapClick($event)">
+    <agm-marker [latitude]="latitude" [longitude]="longitude">
+        <agm-info-window #infoWindow [disableAutoPan]="false"></agm-info-window>
+    </agm-marker>
   </agm-map>
