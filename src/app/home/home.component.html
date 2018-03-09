@@ -1,15 +1,37 @@
 <div class="form-group">
-    <input id="search" placeholder="search for location" autocorrect="off" autocapitalize="off" spellcheck="off" type="text" class="form-control" #search>
+    <input  id="search" 
+            placeholder="search for location" 
+            autocorrect="off" 
+            autocapitalize="off" 
+            spellcheck="off" 
+            type="text" 
+            class="form-control" 
+            #search 
+            [(ngModel)]="model.search"
+            name="search">
 </div>
+
 <agm-map
-[latitude]="latitude" 
-[longitude]="longitude"
-[zoom]="zoom"
-[disableDefaultUI]="true"
-[disableDoubleClickZoom]="true"
-[fullscreenControl]="true"
-(mapClick)="onMapClick($event)">
-    <agm-marker [latitude]="latitude" [longitude]="longitude">
+  #map
+  id="map"
+  name="map"
+  [latitude]="latitude" 
+  [longitude]="longitude"
+  [zoom]="zoom"
+  [disableDefaultUI]="true"
+  [disableDoubleClickZoom]="true"
+  [fullscreenControl]="true"
+  (mapClick)="map.lastOpen?.close(); map.lastOpen = infoWindow; onMapClick($event);"
+  >
+    <agm-marker #marker [latitude]="latitude" [longitude]="longitude" (markerClick)="map.lastOpen?.close(); map.lastOpen = infoWindow; onMarkerClick(map.lastOpen)">
         <agm-info-window #infoWindow [disableAutoPan]="false"></agm-info-window>
     </agm-marker>
-  </agm-map>
+</agm-map>
+
+<agm-map 
+    #map2 
+    id="map2"
+    name="map2"
+    [latitude]="latitude" 
+    [longitude]="longitude"
+    [hidden]="true"></agm-map>
